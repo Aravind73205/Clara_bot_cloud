@@ -88,22 +88,19 @@ Chat history:
 
 Your response:"""
     
+model = genai.GenerativeModel("gemini-2.5-flash")
     #to get reply from gemini
-    with st.spinner("Checking with Clara..."):
-        try:
-            response = gemini.models.generate_content(
-                model="gemini-2.5-flash",
-                contents=clara_prompt
-        )
-
-            ai_reply = response.text
-            friendly_reply = style_response(ai_reply)
+with st.spinner("Checking with Clara..."):
+    try:
+        response = model.generate_content(clara_prompt)
+        ai_reply = response.text
+        friendly_reply = style_response(ai_reply)
             
-            log_interaction(user_text, ai_reply)
-            st.session_state.messages.append({"role": "assistant", "content": friendly_reply})
+        log_interaction(user_text, ai_reply)
+        st.session_state.messages.append({"role": "assistant", "content": friendly_reply})
 
-        except Exception as error:
-            st.error(f"something went wrong: {error}")
+    except Exception as error:
+        st.error(f"something went wrong: {error}")
 
         st.session_state.input_field = ""
 

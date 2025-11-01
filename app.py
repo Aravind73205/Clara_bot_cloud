@@ -141,7 +141,7 @@ with st.sidebar:
     st.markdown("### ⚠️ **Note**")
 
     st.markdown("""
-    -  I’m your **Smart health Assistant, not a certified doctor**, consult a professional for serious concerns🌱
+    -  I'm your **Smart health Assistant, not a certified doctor**, consult a professional for serious concerns🌱
     """)
     
 

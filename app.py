@@ -5,12 +5,15 @@ import json
 import datetime
 import hashlib
 import streamlit as st
+import traceback
 import google.generativeai as genai
 
 #api key load
 try:
     API_KEY = st.secrets["GOOGLE_API_KEY"]
-except (KeyError, AttributeError):
+    genai.configure(api_key=API_KEY)
+
+except (KeyError, AttributeError, Exception) as e:
     st.stop()
 
 #gemini client
@@ -93,7 +96,7 @@ Your response:"""
     # to get reply from gemini
     with st.spinner("Checking with Clara..."):
         try:
-            response = client.models.generate_content(
+            response = genai.generate_content(
                 model="gemini-2.5-flash",
                 contents=clara_prompt,
                 temperature=0.7,
@@ -112,12 +115,11 @@ Your response:"""
             log_interaction(user_text, ai_reply)
 
         except Exception as error:
-            import traceback
             tb = traceback.format_exc()
             st.error("Something went wrong while contacting the language model. See sidebar for details.")
             st.sidebar.text("Error:\n" + str(error))
             st.sidebar.text("Traceback:\n" + tb)
-            
+
     st.rerun()
 
 #homepage ui content

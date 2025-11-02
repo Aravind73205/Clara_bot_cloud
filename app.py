@@ -90,25 +90,33 @@ Chat history:
 
 Your response:"""
     
-    #to get reply from gemini
+    # to get reply from gemini
     with st.spinner("Checking with Clara..."):
         try:
             response = client.models.generate_content(
                 model="gemini-2.5-flash",
                 contents=clara_prompt,
-                temperature = 0.7
-        )
-            st.sidebar.markdown(f"**RAW RESPONSE:** {response}")
-            
+                temperature=0.7,
+            )
+
+            # show raw response in sidebar for debugging
+            try:
+                st.sidebar.markdown(f"**RAW RESPONSE:** {response}")
+            except Exception:
+                pass
+
             ai_reply = response.text
             friendly_reply = style_response(ai_reply)
-            
+
             st.session_state.messages.append({"role": "assistant", "content": friendly_reply})
             log_interaction(user_text, ai_reply)
-            
 
         except Exception as error:
-            st.error(f"something went wrong: {error}")
+            import traceback
+            tb = traceback.format_exc()
+            st.error("Something went wrong while contacting the language model. See sidebar for details.")
+            st.sidebar.text("Error:\n" + str(error))
+            st.sidebar.text("Traceback:\n" + tb)
             
     st.rerun()
 

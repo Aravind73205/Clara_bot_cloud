@@ -16,13 +16,6 @@ try:
 except (KeyError, AttributeError, Exception) as e:
     st.stop()
 
-#gemini client
-try:
-   client = genai.Client(api_key=API_KEY)
-except Exception as e:
-    st.error(f"Error came: {e}")
-    st.stop()
-
 #page config
 st.set_page_config(
     page_title="MediBot - Your Health Assistant",

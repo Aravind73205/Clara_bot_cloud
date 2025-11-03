@@ -93,23 +93,6 @@ def style_response(text):
 
     return text
 
-#log tracking fn
-def log_interaction(user_msg, ai_msg):
-    try:
-        user_hash = hashlib.sha256(user_msg.encode()).hexdigest()[:12]
-        log_entry = {
-            "timestamp": datetime.datetime.now().isoformat(),
-            "user_hash": user_hash,
-            "user_length": len(user_msg),
-            "ai_length": len(ai_msg),
-            "model": "gemini-2.5-flash"
-        }
-        log_file = "/tmp/eval_logs.jsonl"  # for Cloud writing
-        with open(log_file, "a") as f:
-            f.write(json.dumps(log_entry) + "\n")
-    except Exception as log_err:
-        print(f"Logging failed: {log_err}")
- 
 #user input fn
 def user_input_msg(user_text):
     user_text = user_text.strip()
@@ -124,7 +107,6 @@ def user_input_msg(user_text):
                 ),
             )     
             ai_reply = response.text
-            log_interaction(user_text, ai_reply)
 
             st.success("Clara's got you! 💬")  # Quick feedback before refresh
             st.rerun()

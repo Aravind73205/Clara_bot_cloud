@@ -3,7 +3,6 @@ import random
 import streamlit as st
 import google.generativeai as genai
 
-
 #page config
 st.set_page_config(
     page_title="MediBot - Your Health Assistant",
@@ -88,7 +87,7 @@ if prompt := st.chat_input("Ask Clara... 💬"):
 
         except Exception:
             placeholder.error("⚠️ Something went wrong while Clara was thinking.")
-            
+
 #sidebar for guidance
 with st.sidebar:
 
@@ -112,7 +111,9 @@ with st.sidebar:
     st.markdown("---")
     st.markdown("♊️ *Powered by Google's Gemini*")
     
-    #clear button
+    
+    st.markdown("---")
+    #clear chat button
     if st.button("🗑️ Clear Chat", use_container_width=True):
         st.session_state.chat_session = model.start_chat(
             history=[]

@@ -39,6 +39,7 @@ model = genai.GenerativeModel(
     system_instruction=clara_prompt
 )
 
+#session state init
 if "chat_session" not in st.session_state:
     st.session_state.chat_session = model.start_chat(history=[])
 
@@ -60,11 +61,14 @@ def style_response(text):
 
     return text
 
+#chat interface
 st.markdown("## 👩🏻‍⚕️ **Clara** | Smart Health Assistant")
+
 for msg in st.session_state.messages:
     with st.chat_message(msg["role"]):
         st.markdown(msg["text"])
 
+#user input handling
 if prompt := st.chat_input("Ask Clara... 💬"):
     st.chat_message("user").markdown(prompt)
     st.session_state.messages.append({"role": "user", "text": prompt})
@@ -77,12 +81,10 @@ if prompt := st.chat_input("Ask Clara... 💬"):
             response = st.session_state.chat_session.send_message(prompt)
             ai_reply = style_response(response.text.strip())
 
-            # 4️⃣ Display in chat bubble
             with placeholder.container():
                 with st.chat_message("assistant"):
                     st.markdown(ai_reply)
 
-            # 5️⃣ Append to session messages immediately
             st.session_state.messages.append({"role": "assistant", "text": ai_reply})
 
         except Exception:

@@ -47,15 +47,13 @@ model = genai.GenerativeModel(
 
 def extract_message_data(message):
     """Safely extracts role and text content from either a dict or a Content object."""
+    
     if isinstance(message, dict):
-
         role = message.get("role")
-
         content = message.get("parts", [{}])[0].get("text", "[Content Error]")
+
     else:
-
         role = message.role
-
         content = message.parts[0].text if message.parts and message.parts[0].text else "[Reply loading...]"
     
     # Standardize the role for Streamlit

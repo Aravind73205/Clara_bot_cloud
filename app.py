@@ -45,6 +45,23 @@ model = genai.GenerativeModel(
     system_instruction=clara_prompt
 )
 
+def extract_message_data(message):
+    """Safely extracts role and text content from either a dict or a Content object."""
+    if isinstance(message, dict):
+        # Handles custom dictionary-based history (the initial greeting)
+        role = message.get("role")
+        # Safely extract text from the dictionary structure
+        content = message.get("parts", [{}])[0].get("text", "[Content Error]")
+    else:
+        # Handles the standard Content objects from the API's chat session history
+        role = message.role
+        # Safely extract text from the object structure
+        content = message.parts[0].text if message.parts and message.parts[0].text else "[Reply loading...]"
+    
+    # Standardize the role for Streamlit
+    display_role = "assistant" if role == "model" else role
+    return display_role, content
+
 def append_greeting():
     if not st.session_state.chat_session.history:  # Check if history is empty
         st.session_state.chat_session.history.append(
@@ -92,14 +109,6 @@ def log_interaction(user_msg, ai_msg):
             f.write(json.dumps(log_entry) + "\n")
     except Exception as log_err:
         print(f"Logging failed: {log_err}")
-
-def get_message_content(message):
-    """Safely extracts text content regardless of object or dict format."""
-    if isinstance(message, dict):
-        return message.get('parts', [{}])[0].get('text', '[Content Error]')
-    else:
-        # Assumes it's the standard gemini.types.Content object
-        return message.parts[0].text if message.parts else "[Reply loading...]"
  
 #user input fn
 def user_input_msg(user_text):
@@ -133,17 +142,14 @@ chat_container = st.container()
 with chat_container:
     for message in st.session_state.chat_session.history:
 
-        if isinstance(message, dict):
-            role = "assistant" if message["role"] == "model" else message["role"]
-        else:
-            # Assumes it's a Content object from the API
-            role = "assistant" if message.role == "model" else message.role
+        role, content = extract_message_data(message)
 
-        with st.chat_message(role):
-            if role == "user":
-                st.markdown(f"**You:** {content}")
-            else:
-                st.markdown(f"**Clara:** {style_response(content)}")
+        if content:
+            with st.chat_message(role):
+                if role == "user":
+                    st.markdown(f"**You:** {content}")
+                else:
+                    st.markdown(f"**Clara:** {style_response(content)}")
 
 user_input = st.chat_input(placeholder="Ask Clara... 💬")
 if user_input:

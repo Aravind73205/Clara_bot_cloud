@@ -6,7 +6,8 @@ import datetime
 import hashlib
 import streamlit as st
 import traceback
-import google.generativeai as genai
+import google.genai as genai  
+from google.genai import types 
 
 #api key load
 try:
@@ -26,6 +27,9 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
+client = genai.Client()
+
+
 #prompt for clara
 clara_prompt = f"""You are Mrs.Clara, an experienced AI powered family doctor, Your goal is to understand patient issues and support them.
 
@@ -40,27 +44,27 @@ Key Notes:
  You are not a replacement for inperson care, always guide toward professional consulting when needed.
 """
 
+#reply from gemini
+if "chat_session" not in st.session_state:
+    st.session_state.chat_session = client.chats.create(
+        model=model_name,
+    )
+
+    # Manual first message from Clara
+if len(st.session_state.chat_session.history) == 0:
+    st.session_state.chat_session.history.append(
+        types.Content(  # New: types.Content
+                role="model",
+                parts=[types.Part.from_text("Hi! I'm Clara, your AI health companion 😇. How are you feeling today?")]
+            )
+        )
+
 #role for user and gemini
 def role_Assign(role):
     if role == "model":
         return "assistant"
     return role
 
-#reply from gemini
-if "chat_session" not in st.session_state:
-    st.session_state.chat_session = MODEL.start_chat(
-        history=[],
-        config=genai.types.GenerateContentConfig(
-            system_instruction=clara_prompt
-        )
-    )
-
-    # Manual first message from Clara
-if len(st.session_state.chat_session.history) == 0:
-    st.session_state.chat_session.history.append(genai.types.Content(
-        role="model", 
-        parts=[genai.types.Part.from_text("Hi! I'm Clara, your AI health companion 😇. How are you feeling today?")]
-    ))
 
 #custom response
 def style_response(text):
@@ -100,11 +104,14 @@ def user_input_msg(user_text):
     with st.spinner("Checking with Clara..."):
         try:
             response = st.session_state.chat_session.send_message(
-                user_text,
-                config=genai.types.GenerateContentConfig(temperature=0.7)
+                message = user_text,
+                config=types.GenerateContentConfig(
+                    temperature=0.7,
+                    system_instruction=clara_prompt  
+                )
             )
 
-            ai_reply = response.text
+            ai_reply = response.content.parts[0].text
             log_interaction(user_text, ai_reply)
 
             st.success("Clara's got you! 💬")  # Quick feedback before refresh
@@ -123,7 +130,7 @@ chat_container = st.container()
 with chat_container:
     for message in st.session_state.chat_session.history:
         role = role_Assign(message.role)
-        content = message.parts[0].text
+        content = message.parts[0].text if message.content and message.content.parts else "[Reply loading...]"
 
         with st.chat_message(role):
             if role == "user":
@@ -161,15 +168,16 @@ with st.sidebar:
     #for clear chat
     st.markdown("---")
     if st.button("🗑️ **Clear Chat**", use_container_width=True):
-       st.session_state.chat_session = MODEL.start_chat(
-            history=[],
-            config=genai.types.GenerateContentConfig(
-                system_instruction=clara_prompt
+         st.session_state.chat_session = client.chats.create(
+             model=model_name,
+            )
+         
+    if len(st.session_state.chat_session.history) == 0:
+        st.session_state.chat_session.history.append(
+            types.Content(
+                role="model",
+                parts=[types.Part.from_text("Hi! I'm Clara, your AI health companion 😇. How are you feeling today?")]
             )
         )
-       st.session_state.chat_session.history.append(genai.types.Content(
-            role="model", 
-            parts=[genai.types.Part.from_text("Hi! I'm Clara, your AI health companion 😇. How are you feeling today?")]
-        ))
         
-       st.rerun()
+        st.rerun()

@@ -52,10 +52,14 @@ if "chat_session" not in st.session_state:
 def append_greeting():
     """Append Clara's initial greeting if history is empty."""
     if len(st.session_state.chat_session.history) == 0:
-        st.session_state.chat_session.history.append({
-            "role": "model",
-            "parts": ["Hi! I'm Clara, your AI health companion 😇. How are you feeling today?"]
-        })
+        st.session_state.chat_session.history.append(
+            genai.types.Content(
+                role="model",
+                parts=[genai.types.Part.from_text(
+                    "Hi! I'm Clara, your AI health companion 😇. How are you feeling today?"
+                )]
+            )
+        )
 
 #custom response
 def style_response(text):
@@ -112,10 +116,6 @@ def user_input_msg(user_text):
             st.sidebar.text("Error:\n" + str(e))
             st.sidebar.text("Traceback:\n" + tb)
 
-if "chat_session" not in st.session_state:
-    st.session_state.chat_session = model.start_chat(history=[])
-append_greeting()
-
 #homepage ui content
 st.markdown("## 👩🏻‍⚕️ **Clara** |  Smart Health Assistant")
 
@@ -160,8 +160,11 @@ with st.sidebar:
     st.markdown("---")
     st.markdown("♊️ *Powered by Google's Gemini*")
     
+    #chat button
     st.markdown("---")
     if st.button("🗑️ **Clear Chat**", use_container_width=True):
-        st.session_state.chat_session = model.start_chat(history=[])
+        st.session_state.chat_session = model.start_chat(
+            history=[{"role": "system", "parts": [clara_prompt]}]
+        )
         append_greeting()
         st.rerun()

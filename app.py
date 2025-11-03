@@ -21,14 +21,8 @@ try:
     API_KEY = st.secrets["GOOGLE_API_KEY"]
     genai.configure(api_key=API_KEY)
 
-    model_name = 'gemini-2.5-flash'
-    MODEL = genai.GenerativeModel(model_name)
-
 except KeyError:
     st.stop()
-
-model_name = "gemini-2.5-flash"
-model = genai.GenerativeModel(model_name)
 
 #prompt for clara
 clara_prompt = f"""You are Mrs.Clara, an experienced AI powered family doctor, Your goal is to understand patient issues and support them.
@@ -44,26 +38,30 @@ Key Notes:
  You are not a replacement for inperson care, always guide toward professional consulting when needed.
 """
 
+#model init
+model_name = "gemini-2.5-flash"
+model = genai.GenerativeModel(
+    model_name=model_name,
+    system_instruction=clara_prompt
+)
+
 def append_greeting():
-    # Only append if the chat history is empty (after system instruction is added).
-    if len(st.session_state.chat_session.history) == 0: 
+    if not st.session_state.chat_session.history:  # Check if history is empty
         st.session_state.chat_session.history.append(
-            {
+            {  # <-- FIX: Using the correct dictionary structure for history
                 "role": "model",
                 "parts": [
-                    {
-                        "text": "Hi! I'm Clara, your AI health companion 😇. How are you feeling today?"
-                    }
+                    { "text": "Hi! I'm Clara, your AI health companion 😇. How are you feeling today?" }
                 ]
             }
         )
 
 if "chat_session" not in st.session_state:
     st.session_state.chat_session = model.start_chat(
-        # Pass the prompt as the system_instruction.
-        system_instruction=clara_prompt 
+        history=[]  # <-- FIX: Start with an empty history
     )
     append_greeting()
+
 
 #custom response
 def style_response(text):
@@ -167,12 +165,7 @@ with st.sidebar:
     #clear button
     if st.button("🗑️ Clear Chat", use_container_width=True):
         st.session_state.chat_session = model.start_chat(
-            history=[
-                genai.types.Content(
-                    role="model",
-                    parts=[genai.types.Part.from_text(clara_prompt)]
-                )
-            ]
+            history=[]
         )
         append_greeting()
         st.rerun()

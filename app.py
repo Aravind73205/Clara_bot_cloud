@@ -73,24 +73,22 @@ if prompt := st.chat_input("Ask Clara... 💬"):
     placeholder = st.empty()
 
     # to get reply from gemini
-    with placeholder.container():
-        with st.spinner("Clara is thinking..."):
-            try:
-                response = st.session_state.chat_session.send_message(prompt)
-                ai_reply = style_response(response.text.strip())
-            
-            # Clear spinner and display inside chat_message properly
-                placeholder.empty()  # remove spinner
+    with st.spinner("Clara is thinking..."):
+        try:
+            response = st.session_state.chat_session.send_message(prompt)
+            ai_reply = style_response(response.text.strip())
+
+            # 4️⃣ Display in chat bubble
+            with placeholder.container():
                 with st.chat_message("assistant"):
                     st.markdown(ai_reply)
 
-            # Save to session state
-                st.session_state.messages.append({"role": "assistant", "text": ai_reply})
+            # 5️⃣ Append to session messages immediately
+            st.session_state.messages.append({"role": "assistant", "text": ai_reply})
 
-
-            except Exception as e:
-                st.error("⚠️ Something went wrong.")
-
+        except Exception:
+            placeholder.error("⚠️ Something went wrong while Clara was thinking.")
+            
 #sidebar for guidance
 with st.sidebar:
 

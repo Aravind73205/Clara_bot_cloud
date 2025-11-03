@@ -69,14 +69,17 @@ for msg in st.session_state.messages:
 if prompt := st.chat_input("Ask Clara... 💬"):
     st.chat_message("user").markdown(prompt)
     st.session_state.messages.append({"role": "user", "text": prompt})
+    
+    placeholder = st.empty()
 
     # to get reply from gemini
-    with st.chat_message("assistant"):
+    with placeholder.container():
         with st.spinner("Clara is thinking..."):
             try:
                 response = st.session_state.chat_session.send_message(prompt)
                 ai_reply = style_response(response.text.strip())
-                st.markdown(ai_reply)
+                
+                placeholder.markdown(f"**Clara:** {ai_reply}")
                 st.session_state.messages.append({"role": "assistant", "text": ai_reply})
 
             except Exception as e:

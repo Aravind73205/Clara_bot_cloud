@@ -4,11 +4,9 @@ import random
 import json
 import datetime
 import hashlib
-from urllib import response
 import streamlit as st
 import traceback
 import google.generativeai as genai
-from google.generativeai import types
 
 
 #page config
@@ -29,6 +27,9 @@ try:
 except KeyError:
     st.stop()
 
+model_name = "gemini-2.5-flash"
+model = genai.GenerativeModel(model_name)
+
 #prompt for clara
 clara_prompt = f"""You are Mrs.Clara, an experienced AI powered family doctor, Your goal is to understand patient issues and support them.
 
@@ -43,26 +44,13 @@ Key Notes:
  You are not a replacement for inperson care, always guide toward professional consulting when needed.
 """
 
-#reply from gemini
-if "chat_session" not in st.session_state:
-    model = genai.GenerativeModel(model_name)
-    st.session_state.chat_session = model.start_chat(history=[])
-
-    # Manual first message from Clara
-if len(st.session_state.chat_session.history) == 0:
-    st.session_state.chat_session.history.append(
-        types.Content(  # New: types.Content
-                role="model",
-                parts=[types.Part.from_text("Hi! I'm Clara, your AI health companion 😇. How are you feeling today?")]
-            )
-        )
-
-#role for user and gemini
-def role_Assign(role):
-    if role == "model":
-        return "assistant"
-    return role
-
+def append_greeting():
+    """Append Clara's initial greeting if history is empty."""
+    if len(st.session_state.chat_session.history) == 0:
+        st.session_state.chat_session.history.append({
+            "role": "model",
+            "parts": ["Hi! I'm Clara, your AI health companion 😇. How are you feeling today?"]
+        })
 
 #custom response
 def style_response(text):
@@ -120,15 +108,18 @@ def user_input_msg(user_text):
             st.sidebar.text("Error:\n" + str(e))
             st.sidebar.text("Traceback:\n" + tb)
 
+if "chat_session" not in st.session_state:
+    st.session_state.chat_session = model.start_chat(history=[])
+append_greeting()
+
 #homepage ui content
 st.markdown("## 👩🏻‍⚕️ **Clara** |  Smart Health Assistant")
 
 chat_container = st.container()
 with chat_container:
     for message in st.session_state.chat_session.history:
-        role = role_Assign(message.role)
-        content = message.parts[0].text if message.content and message.content.parts else "[Reply loading...]"
-
+        role = "assistant" if message["role"] == "model" else message["role"]
+        content = message["parts"][0] if message.get("parts") else "[Reply loading...]"
         with st.chat_message(role):
             if role == "user":
                 st.markdown(f"**You:** {content}")
@@ -162,18 +153,8 @@ with st.sidebar:
     st.markdown("---")
     st.markdown("♊️ *Powered by Google's Gemini*")
     
-    #for clear chat
     st.markdown("---")
     if st.button("🗑️ **Clear Chat**", use_container_width=True):
-        model = genai.GenerativeModel(model_name)
         st.session_state.chat_session = model.start_chat(history=[])
-        st.rerun()
-
-    if len(st.session_state.chat_session.history) == 0:
-        st.session_state.chat_session.history.append(
-            types.Content(
-                role="model",
-                parts=[types.Part.from_text("Hi! I'm Clara, your AI health companion 😇. How are you feeling today?")]
-            )
-        )
+        append_greeting()
         st.rerun()

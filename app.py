@@ -104,11 +104,11 @@ def user_input_msg(user_text):
                     temperature=0.7
                 ),
             )     
-            ai_reply = response.text
+            ai_reply = response.text           
+            st.rerun()
 
         except Exception as e:
-            st.error("Something went wrong")
-            st.sidebar.text(str(e))
+            st.error("Something went wrong") 
 
 #homepage ui content
 st.markdown("## 👩🏻‍⚕️ **Clara** |  Smart Health Assistant")

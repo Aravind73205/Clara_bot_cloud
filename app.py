@@ -45,24 +45,23 @@ Key Notes:
 """
 
 def append_greeting():
-    if len(st.session_state.chat_session.history) == 0:
+    # Only append if the chat history is empty (after system instruction is added).
+    if len(st.session_state.chat_session.history) == 0: 
         st.session_state.chat_session.history.append(
-            genai.types.Content(
-                role="model",
-                parts=[genai.types.Part.from_text(
-                    "Hi! I'm Clara, your AI health companion 😇. How are you feeling today?"
-                )]
-            )
+            {
+                "role": "model",
+                "parts": [
+                    {
+                        "text": "Hi! I'm Clara, your AI health companion 😇. How are you feeling today?"
+                    }
+                ]
+            }
         )
 
 if "chat_session" not in st.session_state:
     st.session_state.chat_session = model.start_chat(
-        history=[
-            genai.types.Content(
-                role="model",
-                parts=[genai.types.Part.from_text(clara_prompt)]
-            )
-        ]
+        # Pass the prompt as the system_instruction.
+        system_instruction=clara_prompt 
     )
     append_greeting()
 

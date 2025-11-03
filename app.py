@@ -94,18 +94,24 @@ def style_response(text):
 #user input fn
 def user_input_msg(user_text):
     user_text = user_text.strip()
-
+    
+    st.session_state.chat_session.history.append({
+        "role": "user",
+        "parts": [{"text": user_text}]
+    })
     # to get reply from gemini
-    with st.spinner("Checking with Clara..."):
+    with st.chat_message("assistant"):
+        typing_placeholder = st.empty()
         try:
-            response = st.session_state.chat_session.send_message(
-                user_text,
-                generation_config=genai.types.GenerationConfig(
-                    temperature=0.7
-                ),
-            )     
-            ai_reply = response.text           
-            st.rerun()
+            with st.spinner("Checking with Clara..."):
+                response = st.session_state.chat_session.send_message(
+                    user_text,
+                    generation_config=genai.types.GenerationConfig(
+                        temperature=0.7
+                    ),
+                ) 
+            ai_reply = response.text     
+            typing_placeholder.markdown(style_response(response.text))          
 
         except Exception as e:
             st.error("Something went wrong") 
@@ -116,7 +122,6 @@ st.markdown("## 👩🏻‍⚕️ **Clara** |  Smart Health Assistant")
 chat_container = st.container()
 with chat_container:
     for message in st.session_state.chat_session.history:
-
         role, content = extract_message_data(message)
 
         if content:
@@ -159,4 +164,3 @@ with st.sidebar:
             history=[]
         )
         append_greeting()
-        st.rerun()

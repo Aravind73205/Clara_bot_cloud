@@ -47,7 +47,7 @@ model = genai.GenerativeModel(
 
 def extract_message_data(message):
     """Safely extracts role and text content from either a dict or a Content object."""
-    
+
     if isinstance(message, dict):
         role = message.get("role")
         content = message.get("parts", [{}])[0].get("text", "[Content Error]")
@@ -106,14 +106,9 @@ def user_input_msg(user_text):
             )     
             ai_reply = response.text
 
-            st.success("Clara's got you! 💬")  # Quick feedback before refresh
-            st.rerun()
-
         except Exception as e:
-            tb = traceback.format_exc()
             st.error("Something went wrong")
-            st.sidebar.text("Error:\n" + str(e))
-            st.sidebar.text("Traceback:\n" + tb)
+            st.sidebar.text(str(e))
 
 #homepage ui content
 st.markdown("## 👩🏻‍⚕️ **Clara** |  Smart Health Assistant")

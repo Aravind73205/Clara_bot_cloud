@@ -48,14 +48,14 @@ model = genai.GenerativeModel(
 def extract_message_data(message):
     """Safely extracts role and text content from either a dict or a Content object."""
     if isinstance(message, dict):
-        # Handles custom dictionary-based history (the initial greeting)
+
         role = message.get("role")
-        # Safely extract text from the dictionary structure
+
         content = message.get("parts", [{}])[0].get("text", "[Content Error]")
     else:
-        # Handles the standard Content objects from the API's chat session history
+
         role = message.role
-        # Safely extract text from the object structure
+
         content = message.parts[0].text if message.parts and message.parts[0].text else "[Reply loading...]"
     
     # Standardize the role for Streamlit
@@ -63,9 +63,9 @@ def extract_message_data(message):
     return display_role, content
 
 def append_greeting():
-    if not st.session_state.chat_session.history:  # Check if history is empty
+    if not st.session_state.chat_session.history:  
         st.session_state.chat_session.history.append(
-            {  # <-- FIX: Using the correct dictionary structure for history
+            {  
                 "role": "model",
                 "parts": [
                     { "text": "Hi! I'm Clara, your AI health companion 😇. How are you feeling today?" }
@@ -75,7 +75,7 @@ def append_greeting():
 
 if "chat_session" not in st.session_state:
     st.session_state.chat_session = model.start_chat(
-        history=[]  # <-- FIX: Start with an empty history
+        history=[]  
     )
     append_greeting()
 

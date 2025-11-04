@@ -43,6 +43,8 @@ model = genai.GenerativeModel(
 if "chat_session" not in st.session_state:
     st.session_state.chat_session = model.start_chat(history=[])
 
+
+#default msg, if no msg sent yet
 if "messages" not in st.session_state:
     st.session_state.messages = [
         {"role": "assistant", "text": "Hi! I'm Clara, your AI health companion 😇. How are you feeling today?"}
@@ -69,16 +71,16 @@ for msg in st.session_state.messages:
         st.markdown(msg["text"])
 
 #user input handling
-if prompt := st.chat_input("Ask Clara... 💬"):
-    st.chat_message("user").markdown(prompt)
-    st.session_state.messages.append({"role": "user", "text": prompt})
-    
+if user_input := st.chat_input("Ask Clara... 💬"):
+    st.chat_message("user").markdown(user_input)
+    st.session_state.messages.append({"role": "user", "text": user_input})
+
     placeholder = st.empty()
 
     # to get reply from gemini
     with st.spinner("Clara is thinking..."):
         try:
-            response = st.session_state.chat_session.send_message(prompt)
+            response = st.session_state.chat_session.send_message(user_input)
             ai_reply = style_response(response.text.strip())
 
             with placeholder.container():

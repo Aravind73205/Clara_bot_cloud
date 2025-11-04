@@ -36,7 +36,8 @@ Key Notes:
 model_name = "gemini-2.5-flash"
 model = genai.GenerativeModel(
     model_name=model_name,
-    system_instruction=clara_prompt
+    system_instruction=clara_prompt,
+    generation_config={"temperature": 0.3, "top_p": 0.9, "max_output_tokens": 1024}
 )
 
 #session state init

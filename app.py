@@ -74,7 +74,8 @@ for msg in st.session_state.messages:
 #user input handling
 user_input = st.chat_input("Ask Clara... 💬")   #or we can even write it as user_input := st.text_input("Ask Clara...") both are same
 if user_input:
-    st.chat_message("user").markdown(user_input)
+    #display user msg immediately
+    st.chat_message("user").markdown(user_input) 
     st.session_state.messages.append({"role": "user", "text": user_input})
 
     # to get reply from gemini

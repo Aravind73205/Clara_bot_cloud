@@ -15,8 +15,6 @@ She chats naturally, offers **common-sense health tips**, and encourages profess
 
 ![Clara Chatbot Screenshot](./assets/clara-screenshot.png)
 
-*(You can replace the above path with your actual screenshot location inside the repo, like `/images/clara-chat.png`)*
-
 ---
 
 ## Why I Built Clara

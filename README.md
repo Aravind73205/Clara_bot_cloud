@@ -3,7 +3,6 @@
 **Clara** is your friendly AI health companion, built with **Streamlit** and **Google’s Gemini API**. 
 She chats naturally, offers safe and general health advice, and always guides you to seek professional medical help when needed.
 
----
 
 🔗 **Try the App here** 👉 [Launch Clara](https://clara-bot-2025.streamlit.app)
 

@@ -73,20 +73,19 @@ for msg in st.session_state.messages:
 
 #user input handling
 user_input = st.chat_input("Ask Clara... 💬")   #or we can even write it as user_input := st.text_input("Ask Clara...") both are same
-
 if user_input:
     st.chat_message("user").markdown(user_input)
     st.session_state.messages.append({"role": "user", "text": user_input})
 
     # to get reply from gemini
-    with st.spinner("Clara is thinking..."):
+    with st.spinner("Clara is thinking..."):     
         try:
             response = st.session_state.chat_session.send_message(user_input)
             ai_reply = style_response(response.text.strip())
-        
 
             st.session_state.messages.append({"role": "assistant", "text": ai_reply})
             st.rerun()
+
         except Exception:
             st.error("⚠️ Something went wrong while Clara was thinking.")
 
@@ -115,6 +114,7 @@ with st.sidebar:
     
     
     st.markdown("---")
+    
     #clear chat button
     if st.button("🗑️ Clear Chat", use_container_width=True):
         st.session_state.chat_session = model.start_chat(

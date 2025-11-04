@@ -1,22 +1,35 @@
 # MediBot – Clara: Smart Health Assistant 👩🏻‍⚕️💊
 
 **Clara** is your friendly AI health companion, built with **Streamlit** and **Google’s Gemini API**. 
-She’s deployed as a **Streamlit web app**, so you can access her from any browser.  
 She chats naturally, offers **common-sense health tips**, and encourages professional medical consultation when needed.  
 
-[Live Link](https://your-app-name.streamlit.app)
+🔗 **Try the App here** 👉 [Launch Clara](https://clara-bot-2025.streamlit.app)
+
 
 > ⚠️ Clara is **not a doctor**. She’s your AI friend who listens and guides with safety first advice.  
 
 ---
 
+
+## 📸 App Preview
+
+Add your app screenshot here (example):
+
+![Clara Chatbot Screenshot](./assets/clara-screenshot.png)
+
+*(You can replace the above path with your actual screenshot location inside the repo, like `/images/clara-chat.png`)*
+
+---
+
 ## Why I Built Clara
 
-I wanted to create a **safe, actually helpful AI health buddy**-something that’s approachable, privacy-conscious, and genuinely useful. Clara:
+I wanted to create a **safe, actually helpful AI health buddy**-something that’s approachable, privacy conscious, and genuinely useful. 
 
-- Listens to your concerns  
-- Provides friendly suggestions  
-- Reminds you to seek professional care when needed  
+Clara:
+
+- ✅ She listens like a companion  
+- ✅ She responds with empathy and simple language  
+- ✅ She nudges, but never replaces professional healthcare advice  
 
 ---
 
@@ -30,17 +43,31 @@ Here’s how she helps:
 - **Minor injuries:**  
   *Example:* “I think I twisted my ankle” → Clara suggests the RICE method (Rest, Ice, Compression, Elevation) + “See a doctor if swelling persists.”  
 
-- **End of chat summary:**  
-  Clara provides a concise recap and asks: “Did I help?”  
+- **Follow up questions and friendly tone**  
+  She chats like a human, uses emojis, and always keeps the tone light. 
 
 ---
 
 ## Key Features
 
-- **Conversational:** Friendly AI assistant powered by **Gemini 2.5 Flash**  
-- **Privacy first logging:** User messages are hashed, no personal data stored  
-- **Medical disclaimers included:** Ensures safe usage  
-- **Clean Streamlit UI:** Real time chat interface with minimal design and emoji responses  
+-  🔹 **Conversational:** Friendly AI assistant powered by **Gemini 2.5 Flash**
+-  🔹 **Fast responses using `st.rerun()`:** No delays, instant chat experience  
+-  🔹 **Privacy conscious:** No user data is stored permanently   
+-  🔹 **Medical disclaimers included:** Ensures safe usage  
+-  🔹 **Clean Streamlit UI:** Real time chat interface with minimal design and emoji responses  
+
+---
+
+
+## 🚀 Tech Stack
+
+| Tool / Framework | Purpose |
+|------------------|---------|
+| **Python 3.10+** | Language |
+| **Streamlit**    | Web UI and deployment |
+| **Google Gemini**| AI chat model |
+| **Session State**| Chat history management |
+| **st.rerun()**   | Instant UI refresh |
 
 ---
 

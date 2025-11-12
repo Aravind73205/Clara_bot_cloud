@@ -53,8 +53,8 @@ if "messages" not in st.session_state:
 
 #custom response
 def style_response(text):
-    starters = ["Hmm", "Okay", "Alright,"]
-    emojis = ["💊","👍","😊"]
+    starters = ["Alright,", "Got it,", "Okay,", "Let's see,"]
+    emojis = ["✨", "💡", "🚀", "👍", "😊", "🧠"]
 
     if random.random() < 0.2:
         text = random.choice(starters) + " " + text
@@ -62,7 +62,7 @@ def style_response(text):
     if random.random() < 0.4:
         text += " " + random.choice(emojis)
 
-    return text
+    return text.rstrip(".!?") + "."
 
 #chat interface
 st.markdown("## 👩🏻‍⚕️ **Clara** | Smart Health Assistant")
@@ -72,7 +72,7 @@ for msg in st.session_state.messages:
         st.markdown(msg["text"])
 
 #user input handling
-user_input = st.chat_input("Ask Clara... 💬")   #or we can even write it as user_input := st.text_input("Ask Clara...") both are same
+user_input = st.chat_input("Ask Clara... 💬")   #or we can even write it as [user_input := st.text_input("Ask Clara...")] both are same
 if user_input:
     #display user msg immediately
     st.chat_message("user").markdown(user_input) 
